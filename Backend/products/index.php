@@ -40,18 +40,13 @@ if ($method === "POST") {
     $stock = $data['stock'];
     $brand = $data['brand'];
     $thumbnail = $data['thumbnail'];
-    $warranty_information = $data['warranty_information'];
-    $shipping_information = $data['shipping_information'];
-    $availability_status = $data['availability_status'];
-    $return_policy = $data['availability_status'];
+    $warranty_information = $data['warranty'];
+    $shipping_information = $data['shipping'];
+    $availability_status = $data['availability'];
+    $return_policy = $data['returnPolicy'];
     
 
-    
 
-    // $sql = "INSERT INTO `accounts` (name, email, password, `role_ENUM`, `created_at`) VALUES ( '$name' , '$email' , '$password', 'customer' ,NOW() )";
-
-
-    // $sql = "INSERT INTO `products` ( `title`, `description`, `category`, `price`, `discount`, `rating`, `stock`, `brand`, `thumbnail`, `warranty_information`, `shipping_information`, `availability_status`, `return_policy`) VALUES ( '$title', '$description ', '$category', '$price', '$discount', '$rating', '$stock', '$brand', '$thumbnail', '$warranty_information', '$shipping_information', '$availability_status', '$return_policy'";
 
     $sql = "INSERT INTO `products` (`title`, `description`, `category`, `price`, `discount`, `rating`, `stock`, `brand`, `thumbnail`, `warranty_information`, `shipping_information`, `availability_status`, `return_policy`) 
     VALUES ('$title', '$description', '$category', '$price', '$discount',  '$rating', '$stock', '$brand', '$thumbnail', '$warranty_information', '$shipping_information', '$availability_status', '$return_policy')";

@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json");
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, DELETE, PUT");
 header("Access-Control-Allow-Headers: Content-Type");
 
 $conn = mysqli_connect("localhost", "root", "", "ecommerce");
@@ -47,3 +47,66 @@ if ($method === "POST") {
         echo json_encode(["success"=> false, "message"=> "Account creating faild"]);
     }
 }
+
+/* ---------- DELETE ---------- */
+if ($method === "DELETE") {
+  
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    $id = $data['id'] ?? null;
+
+    if ($id) {
+        $sql = "DELETE FROM `accounts` WHERE `accounts`.`id` = $id";
+        if (mysqli_query($conn, $sql)) {
+            echo json_encode(["success" => true, "message" => "Account deleted successfully"]);
+        } else {
+            echo json_encode(["success" => false, "message" => "Failed to delete account"]);
+        }
+    } else {
+        echo json_encode(["success" => false, "message" => "ID is required to delete account"]);
+    }
+}
+
+
+/* ---------- PUT (Update) ---------- */
+if ($method === "PUT") {
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    $id = $data['id'] ?? null;
+
+    if (!$id) {
+        echo json_encode(["success" => false, "message" => "ID is required"]);
+        exit;
+    }
+
+    $fields = [];
+
+    if (!empty($data['name'])) {
+        $name = mysqli_real_escape_string($conn, $data['name']);
+        $fields[] = "`name` = '$name'";
+    }
+
+    if (!empty($data['email'])) {
+        $email = mysqli_real_escape_string($conn, $data['email']);
+        $fields[] = "`email` = '$email'";
+    }
+
+    if (!empty($data['role'])) {
+        $role = mysqli_real_escape_string($conn, $data['role']);
+        $fields[] = "`role_ENUM` = '$role'";
+    }
+
+    if (count($fields) === 0) {
+        echo json_encode(["success" => false, "message" => "No data provided to update"]);
+        exit;
+    }
+
+    $sql = "UPDATE `accounts` SET " . implode(", ", $fields) . " WHERE `id` = $id";
+
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(["success" => true, "message" => "User updated successfully"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Update failed"]);
+    }
+}
+
