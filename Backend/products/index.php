@@ -15,22 +15,40 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 /* ---------- GET (Read) ---------- */
 if ($method === "GET") {
-    $sql = "SELECT * FROM `products`";
-    $result = mysqli_query($conn, $sql);
 
-    $data = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
+    // Check if "id" is passed in query string
+    if (isset($_GET['id'])) {
+        $id = intval($_GET['id']); // ensure numeric
+
+        $sql = "SELECT * FROM `products` WHERE id = $id";
+        $result = mysqli_query($conn, $sql);
+        $product = mysqli_fetch_assoc($result);
+
+        if ($product) {
+            echo json_encode($product);
+        } else {
+            http_response_code(404);
+            echo json_encode(["success" => false, "message" => "Product not found"]);
+        }
+    } else {
+        // No id → return all products
+        $sql = "SELECT * FROM `products`";
+        $result = mysqli_query($conn, $sql);
+
+        $data = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $data[] = $row;
+        }
+
+        echo json_encode($data);
     }
-
-    echo json_encode($data);
 }
+
 
 /* ---------- POST  ---------- */
 if ($method === "POST") {
     $data = json_decode(file_get_contents("php://input"), true);
 
-    // Null coalescing operator ব্যবহার করে warnings এড়ানো
     $title  = mysqli_real_escape_string($conn, $data['title'] ?? '');
     $description = mysqli_real_escape_string($conn, $data['description'] ?? '');
     $category = mysqli_real_escape_string($conn, $data['category'] ?? '');
